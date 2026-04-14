@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CompanyFlow – Firmowy System Zarządzania Zadaniami</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main-content">Przejdź do głównej treści</a>
+
+  <header class="site-header">
+    <div class="container header-grid">
+      <div>
+        <p class="eyebrow">Aplikacja firmowa</p>
+        <h1>CompanyFlow</h1>
+        <p class="subtitle">
+          Dostępny system zarządzania zadaniami, zgłoszeniami i pracą zespołową
+        </p>
+      </div>
+
+      <div class="header-actions" aria-label="Ustawienia aplikacji">
+        <button id="themeToggle" class="btn btn-secondary" type="button" aria-pressed="false">
+          Zmień motyw
+        </button>
+        <button id="seedDataBtn" class="btn btn-secondary" type="button">
+          Wczytaj dane demo
+        </button>
+        <button id="clearAllBtn" class="btn btn-danger" type="button">
+          Wyczyść dane
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div id="liveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+  <main id="main-content" class="container main-grid">
+    <!-- Panel statystyk -->
+    <section class="card" aria-labelledby="stats-title">
+      <div class="section-header">
+        <h2 id="stats-title">Panel statystyk</h2>
+      </div>
+
+      <div class="stats-grid" id="statsGrid">
+        <article class="stat-card">
+          <h3>Wszystkie zadania</h3>
+          <p id="statTotal" class="stat-number">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Nowe</h3>
+          <p id="statNew" class="stat-number">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>W toku</h3>
+          <p id="statInProgress" class="stat-number">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Zakończone</h3>
+          <p id="statDone" class="stat-number">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Po terminie</h3>
+          <p id="statOverdue" class="stat-number">0</p>
+        </article>
+        <article class="stat-card">
+          <h3>Krytyczne</h3>
+          <p id="statCritical" class="stat-number">0</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Formularz -->
+    <section class="card" aria-labelledby="form-title">
+      <div class="section-header">
+        <h2 id="form-title">Formularz zadania / zgłoszenia</h2>
+      </div>
+
+      <form id="taskForm" novalidate>
+        <input type="hidden" id="taskId" />
+
+        <fieldset class="form-group">
+          <legend>Dane podstawowe</legend>
+
+          <div class="grid-2">
+            <div class="field">
+              <label for="title">Tytuł zadania <span aria-hidden="true">*</span></label>
+              <input id="title" name="title" type="text" maxlength="120" required aria-describedby="titleHelp titleError" />
+              <small id="titleHelp">Krótka nazwa zadania lub zgłoszenia.</small>
+              <p id="titleError" class="error-message" hidden>Podaj tytuł zadania.</p>
+            </div>
+
+            <div class="field">
+              <label for="project">Projekt <span aria-hidden="true">*</span></label>
+              <select id="project" name="project" required aria-describedby="projectError">
+                <option value="">Wybierz projekt</option>
+                <option value="ERP">ERP</option>
+                <option value="CRM">CRM</option>
+                <option value="HR">HR</option>
+                <option value="Sprzedaż">Sprzedaż</option>
+                <option value="Logistyka">Logistyka</option>
+                <option value="Finanse">Finanse</option>
+              </select>
+              <p id="projectError" class="error-message" hidden>Wybierz projekt.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="description">Opis</label>
+            <textarea id="description" name="description" rows="4" maxlength="2000"></textarea>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+          <legend>Odpowiedzialność i klasyfikacja</legend>
+
+          <div class="grid-3">
+            <div class="field">
+              <label for="department">Dział</label>
+              <select id="department" name="department">
+                <option value="">Wybierz dział</option>
+                <option value="IT">IT</option>
+                <option value="HR">HR</option>
+                <option value="Finanse">Finanse</option>
+                <option value="Obsługa Klienta">Obsługa Klienta</option>
+                <option value="Logistyka">Logistyka</option>
+                <option value="Marketing">Marketing</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="assignee">Przypisano do</label>
+              <input id="assignee" name="assignee" type="text" maxlength="80" placeholder="Np. Jan Kowalski" />
+            </div>
+
+            <div class="field">
+              <label for="priority">Priorytet</label>
+              <select id="priority" name="priority">
+                <option value="niski">Niski</option>
+                <option value="średni" selected>Średni</option>
+                <option value="wysoki">Wysoki</option>
+                <option value="krytyczny">Krytyczny</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="field">
+              <label for="status">Status</label>
+              <select id="status" name="status">
+                <option value="nowe">Nowe</option>
+                <option value="w toku">W toku</option>
+                <option value="wstrzymane">Wstrzymane</option>
+                <option value="zakończone">Zakończone</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="dueDate">Termin realizacji</label>
+              <input id="dueDate" name="dueDate" type="date" />
+            </div>
+
+            <div class="field">
+              <label for="tags">Tagi</label>
+              <input id="tags" name="tags" type="text" placeholder="Np. pilne, klient, audyt" />
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="form-group">
+          <legend>Informacje dodatkowe</legend>
+          <div class="field">
+            <label for="notes">Notatki wewnętrzne</label>
+            <textarea id="notes" name="notes" rows="3" maxlength="1500"></textarea>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Zapisz zadanie</button>
+          <button type="button" class="btn btn-secondary" id="resetFormBtn">Wyczyść formularz</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Filtry -->
+    <section class="card" aria-labelledby="filters-title">
+      <div class="section-header">
+        <h2 id="filters-title">Wyszukiwanie i filtry</h2>
+      </div>
+
+      <div class="grid-4">
+        <div class="field">
+          <label for="searchInput">Szukaj</label>
+          <input id="searchInput" type="search" placeholder="Tytuł, opis, dział, osoba, tag..." />
+        </div>
+
+        <div class="field">
+          <label for="filterStatus">Filtruj po statusie</label>
+          <select id="filterStatus">
+            <option value="">Wszystkie statusy</option>
+            <option value="nowe">Nowe</option>
+            <option value="w toku">W toku</option>
+            <option value="wstrzymane">Wstrzymane</option>
+            <option value="zakończone">Zakończone</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="filterPriority">Filtruj po priorytecie</label>
+          <select id="filterPriority">
+            <option value="">Wszystkie priorytety</option>
+            <option value="niski">Niski</option>
+            <option value="średni">Średni</option>
+            <option value="wysoki">Wysoki</option>
+            <option value="krytyczny">Krytyczny</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="filterProject">Filtruj po projekcie</label>
+          <select id="filterProject">
+            <option value="">Wszystkie projekty</option>
+            <option value="ERP">ERP</option>
+            <option value="CRM">CRM</option>
+            <option value="HR">HR</option>
+            <option value="Sprzedaż">Sprzedaż</option>
+            <option value="Logistyka">Logistyka</option>
+            <option value="Finanse">Finanse</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <button id="sortNewestBtn" class="btn btn-secondary" type="button">Sortuj: najnowsze</button>
+          <button id="sortPriorityBtn" class="btn btn-secondary" type="button">Sortuj: priorytet</button>
+          <button id="sortDeadlineBtn" class="btn btn-secondary" type="button">Sortuj: termin</button>
+        </div>
+
+        <div class="toolbar-group">
+          <button id="exportJsonBtn" class="btn btn-secondary" type="button">Eksport JSON</button>
+          <button id="exportCsvBtn" class="btn btn-secondary" type="button">Eksport CSV</button>
+          <label for="importJsonInput" class="btn btn-secondary file-label">Import JSON</label>
+          <input id="importJsonInput" type="file" accept=".json,application/json" hidden />
+        </div>
+      </div>
+    </section>
+
+    <!-- Lista zadań -->
+    <section class="card" aria-labelledby="tasks-title">
+      <div class="section-header">
+        <h2 id="tasks-title">Lista zadań</h2>
+        <p id="resultsCount" class="muted">Liczba widocznych rekordów: 0</p>
+      </div>
+
+      <div class="table-wrapper" tabindex="0" aria-label="Tabela zadań">
+        <table class="task-table">
+          <caption class="sr-only">Lista zadań firmowych</caption>
+          <thead>
+            <tr>
+              <th scope="col">Tytuł</th>
+              <th scope="col">Projekt</th>
+              <th scope="col">Dział</th>
+              <th scope="col">Osoba</th>
+              <th scope="col">Priorytet</th>
+              <th scope="col">Status</th>
+              <th scope="col">Termin</th>
+              <th scope="col">Tagi</th>
+              <th scope="col">Akcje</th>
+            </tr>
+          </thead>
+          <tbody id="taskTableBody">
+            <!-- Render JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" class="empty-state" hidden>
+        <h3>Brak danych</h3>
+        <p>Nie znaleziono zadań spełniających kryteria wyszukiwania.</p>
+      </div>
+    </section>
+
+    <!-- Dziennik aktywności -->
+    <section class="card" aria-labelledby="activity-title">
+      <div class="section-header">
+        <h2 id="activity-title">Dziennik aktywności</h2>
+      </div>
+      <ul id="activityLog" class="activity-log" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <template id="taskRowTemplate">
+    <tr>
+      <td class="td-title">
+        <strong class="task-title"></strong>
+        <p class="task-desc muted"></p>
+      </td>
+      <td class="task-project"></td>
+      <td class="task-department"></td>
+      <td class="task-assignee"></td>
+      <td class="task-priority"></td>
+      <td class="task-status"></td>
+      <td class="task-dueDate"></td>
+      <td class="task-tags"></td>
+      <td class="task-actions"></td>
+    </tr>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
